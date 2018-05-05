@@ -1,9 +1,10 @@
 find_path(GUILE_INCLUDE_DIR libguile.h PATH_SUFFIXES
   guile/2.2
   guile/2.0
+  guile/1.8
   guile)
 
-find_library(GUILE_LIBRARY NAMES guile-2.2 guile-2.0 guile)
+find_library(GUILE_LIBRARY NAMES guile-2.2 guile-2.0 guile-1.8 guile)
 
 if(GUILE_INCLUDE_DIR)
   set(GUILE_VERSION_MAJOR 0)
