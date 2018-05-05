@@ -1,1 +1,1 @@
-#cmakedefine HAVE_BLAS_H @BLAS_FOUND@
+#cmakedefine HAVE_BLAS_H

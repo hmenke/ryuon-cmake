@@ -34,6 +34,7 @@ set(SYSTEM_LIBRARIES
 
 # Set config flags (emulate autoconf)
 
+set(HAVE_BLAS_H ${BLAS_FOUND})
 configure_file(config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/libiter/config.h)
 
 # nitsol
