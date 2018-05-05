@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 
 project(stokes C)
+enable_testing()
 enable_language(Fortran)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
@@ -54,12 +55,12 @@ add_library(stokes ${LIBSTOKES_SRC})
 include_directories(${GUILE_INCLUDE_DIRS})
 target_link_libraries(stokes nitsol iter ${GUILE_LIBRARIES})
 
-# stokes
+# stokes3
 
-set(STOKES_SRC
+set(STOKES3_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/file.c
   ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/stokes3.c)
-add_executable(stokes3 ${STOKES_SRC})
+add_executable(stokes3 ${STOKES3_SRC})
 target_link_libraries(stokes3 nitsol iter stokes ${SYSTEM_LIBRARIES})
 
 # Python interface
@@ -72,6 +73,16 @@ swig_add_library(stokes
   SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/stokes.i)
 swig_link_libraries(stokes nitsol iter stokes
   ${SYSTEM_LIBRARIES} ${PYTHON_LIBRARIES})
+
+# Tests
+
+add_executable(test-stokes ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/test-stokes.c)
+target_link_libraries(test-stokes nitsol iter stokes ${SYSTEM_LIBRARIES})
+add_test(NAME test-stokes.c COMMAND test-stokes)
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/stokes/python/test-stokes.py
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+add_test(NAME test-stokes.py COMMAND ${PYTHON_EXECUTABLE} test-stokes.py)
 
 # print summary
 

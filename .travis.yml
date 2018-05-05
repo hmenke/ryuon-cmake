@@ -22,3 +22,4 @@ script:
   - cd build
   - cmake ..
   - make -j 2
+  - make -j 2 test
