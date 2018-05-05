@@ -1,0 +1,12 @@
+[submodule "stokes"]
+	path = stokes
+	url = https://github.com/kichiki/stokes.git
+[submodule "libstokes"]
+	path = libstokes
+	url = https://github.com/kichiki/libstokes.git
+[submodule "libiter"]
+	path = libiter
+	url = https://github.com/kichiki/libiter.git
+[submodule "nitsol"]
+	path = nitsol
+	url = https://github.com/cmacmackin/nitsol.git

@@ -1,0 +1,21 @@
+dist: trusty
+sudo: false
+
+language: c
+
+addons:
+  apt:
+    packages:
+    - libarpack2-dev
+    - libblas-dev
+    - libgsl0-dev
+    - gfortran
+    - guile-2.0-dev
+    - liblapack-dev
+    - libnetcdf-dev
+
+script:
+  - mkdir build
+  - cd build
+  - cmake ..
+  - make -j 2
