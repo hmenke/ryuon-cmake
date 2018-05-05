@@ -67,11 +67,11 @@ target_link_libraries(stokes3 nitsol iter stokes ${SYSTEM_LIBRARIES})
 include(${SWIG_USE_FILE})
 include_directories(${PYTHON_INCLUDE_PATH})
 
-set(SWIG_SRC ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/stokes.i)
-#set_source_files_properties(${SWIG_SRC} PROPERTIES CPLUSPLUS ON SWIG_FLAGS "-py3")
-swig_add_module(stokes python ${SWIG_SRC})
-swig_link_libraries(stokes nitsol iter stokes ${SYSTEM_LIBRARIES})
-
+swig_add_library(stokes
+  LANGUAGE python
+  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/stokes.i)
+swig_link_libraries(stokes nitsol iter stokes
+  ${SYSTEM_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # print summary
 
