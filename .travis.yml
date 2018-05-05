@@ -13,6 +13,9 @@ addons:
     - guile-2.0-dev
     - liblapack-dev
     - libnetcdf-dev
+    - libpython2.7-dev
+    - python2.7
+    - swig
 
 script:
   - mkdir build
