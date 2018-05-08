@@ -36,22 +36,23 @@ make -j 16
 
 ## Requirements
 
-* CMake 3.9
-
-    - supported C compiler
-    - supported FORTRAN compiler
-
+* C compiler
+* FORTRAN compiler
+* CMake (>=3.9)
 * ARPACK
 * BLAS
 * GSL
-* Guile
+* Guile (<=2.0)
 * LAPACK
 * NetCDF
 * Python 2
 * SWIG
 
-To find out which packages you need on Ubuntu, take a look into
-`.travis.yml`.
+On a naked Ubuntu 18.04 LTS you can easily install all the required
+dependencies using
+```bash
+apt-get install build-essential cmake git libarpack2-dev libblas-dev libgsl-dev gfortran guile-2.0-dev liblapack-dev libnetcdf-dev libpython2.7-dev python2.7 swig
+```
 
 [travis-svg]: https://travis-ci.org/hmenke/ryuon-cmake.svg?branch=master
 [travis-link]: https://travis-ci.org/hmenke/ryuon-cmake
