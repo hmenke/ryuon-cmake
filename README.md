@@ -42,7 +42,7 @@ make -j 16
 * ARPACK
 * BLAS
 * GSL
-* Guile (<=2.0)
+* Guile (<=2.0) yes, this is indeed **less or equal**
 * LAPACK
 * NetCDF
 * Python 2
