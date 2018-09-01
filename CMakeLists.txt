@@ -5,6 +5,24 @@ enable_testing()
 enable_language(Fortran)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+# Update the submodules
+
+set(SUBMODULES "libiter;libstokes;nitsol;stokes")
+if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
+  find_package(Git)
+  if(GIT_FOUND)
+    execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+  endif()
+  foreach(SUBMODULE ${SUBMODULES})
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SUBMODULE}/.git")
+      message(FATAL_ERROR "Submodule ${SUBMODULE} missing!")
+    endif()
+  endforeach()
+endif()
+
+# Include the RYUON sources
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libiter/src)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libstokes/src)
