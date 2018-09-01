@@ -61,29 +61,43 @@ configure_file(config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/libiter/config.h)
 # nitsol
 
 file(GLOB NITSOL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/nitsol/Nitsol/*.f)
-add_library(nitsol ${NITSOL_SRC})
-target_link_libraries(nitsol ${BLAS_LIBRARIES})
+add_library(nitsol_object OBJECT ${NITSOL_SRC})
+add_library(nitsol_static STATIC $<TARGET_OBJECTS:nitsol_object>)
+set_target_properties(nitsol_static PROPERTIES OUTPUT_NAME nitsol)
+target_link_libraries(nitsol_static ${BLAS_LIBRARIES})
+add_library(nitsol_shared SHARED $<TARGET_OBJECTS:nitsol_object>)
+set_target_properties(nitsol_shared PROPERTIES OUTPUT_NAME nitsol)
+target_link_libraries(nitsol_shared ${BLAS_LIBRARIES})
 
 # libiter
 
 file(GLOB LIBITER_SRC ${CMAKE_CURRENT_SOURCE_DIR}/libiter/src/*.c)
-add_library(iter ${LIBITER_SRC})
-target_link_libraries(iter m ${BLAS_LIBRARIES})
+add_library(iter_object OBJECT ${LIBITER_SRC})
+add_library(iter_static STATIC $<TARGET_OBJECTS:iter_object>)
+set_target_properties(iter_static PROPERTIES OUTPUT_NAME iter)
+target_link_libraries(iter_static m ${BLAS_LIBRARIES})
+add_library(iter_shared SHARED $<TARGET_OBJECTS:iter_object>)
+set_target_properties(iter_shared PROPERTIES OUTPUT_NAME iter)
+target_link_libraries(iter_shared m ${BLAS_LIBRARIES})
 
 # libstokes
 
 file(GLOB LIBSTOKES_SRC ${CMAKE_CURRENT_SOURCE_DIR}/libstokes/src/*.c)
-add_library(stokes ${LIBSTOKES_SRC})
+add_library(stokes_object OBJECT ${LIBSTOKES_SRC})
+add_library(stokes_static STATIC $<TARGET_OBJECTS:stokes_object>)
+set_target_properties(stokes_static PROPERTIES OUTPUT_NAME stokes)
 include_directories(${GUILE_INCLUDE_DIRS})
-target_link_libraries(stokes nitsol iter ${GUILE_LIBRARIES})
-
+target_link_libraries(stokes_static nitsol_static iter_static ${GUILE_LIBRARIES})
+add_library(stokes_shared SHARED $<TARGET_OBJECTS:stokes_object>)
+set_target_properties(stokes_shared PROPERTIES OUTPUT_NAME stokes)
+target_link_libraries(stokes_shared nitsol_shared iter_shared ${GUILE_LIBRARIES})
 # stokes3
 
 set(STOKES3_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/file.c
   ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/stokes3.c)
 add_executable(stokes3 ${STOKES3_SRC})
-target_link_libraries(stokes3 nitsol iter stokes ${SYSTEM_LIBRARIES})
+target_link_libraries(stokes3 nitsol_static iter_static stokes_static ${SYSTEM_LIBRARIES})
 
 # Python interface
 
@@ -93,13 +107,13 @@ include_directories(${PYTHON_INCLUDE_PATH})
 swig_add_library(stokes
   LANGUAGE python
   SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/stokes.i)
-swig_link_libraries(stokes nitsol iter stokes
+swig_link_libraries(stokes nitsol_static iter_static stokes_static
   ${SYSTEM_LIBRARIES} ${PYTHON_LIBRARIES})
 
 # Tests
 
 add_executable(test-stokes ${CMAKE_CURRENT_SOURCE_DIR}/stokes/src/test-stokes.c)
-target_link_libraries(test-stokes nitsol iter stokes ${SYSTEM_LIBRARIES})
+target_link_libraries(test-stokes nitsol_static iter_static stokes_static ${SYSTEM_LIBRARIES})
 add_test(NAME test-stokes.c COMMAND test-stokes)
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/stokes/python/test-stokes.py
@@ -110,3 +124,32 @@ add_test(NAME test-stokes.py COMMAND ${PYTHON_EXECUTABLE} test-stokes.py)
 
 include(FeatureSummary)
 feature_summary(WHAT ALL)
+
+# Installation targets
+
+# Install nitsol
+install(FILES nitsol.h DESTINATION include/nitsol)
+install(TARGETS nitsol_shared LIBRARY DESTINATION lib)
+
+# Install libiter
+install(DIRECTORY libiter/src/ DESTINATION include/libiter FILES_MATCHING PATTERN "*.h")
+install(TARGETS iter_shared LIBRARY DESTINATION lib)
+
+# Install libstokes
+install(DIRECTORY libstokes/src/ DESTINATION include/libstokes FILES_MATCHING PATTERN "*.h")
+install(TARGETS stokes_shared LIBRARY DESTINATION lib)
+
+# Install Python modules
+execute_process(
+  COMMAND "${PYTHON_EXECUTABLE}" -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(prefix=''));"
+  OUTPUT_VARIABLE PY_MOD_DIR
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_QUIET)
+if(PY_MOD_DIR STREQUAL "")
+  message(STATUS "Could not determine Python module directory. Not installing Python module!")
+else()
+  file(WRITE ${CMAKE_BINARY_DIR}/__init__.py "from stokes import *")
+  install(FILES ${CMAKE_BINARY_DIR}/__init__.py DESTINATION ${PY_MOD_DIR}/stokes)
+  install(FILES ${CMAKE_BINARY_DIR}/stokes.py DESTINATION ${PY_MOD_DIR}/stokes)
+  install(TARGETS _stokes LIBRARY DESTINATION ${PY_MOD_DIR}/stokes)
+endif()
