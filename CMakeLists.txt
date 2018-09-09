@@ -43,6 +43,19 @@ find_package(LAPACK REQUIRED)
 find_package(NetCDF REQUIRED)
 find_package(PythonInterp 2 REQUIRED)
 find_package(PythonLibs 2 REQUIRED)
+
+execute_process(
+  COMMAND "${PYTHON_EXECUTABLE}" -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(prefix=''));"
+  OUTPUT_VARIABLE PY_MOD_DIR
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  ERROR_VARIABLE PY_MOD_ERR)
+
+message(STATUS "Python module directory: ${PY_MOD_DIR}")
+
+if((PY_MOD_DIR STREQUAL "") OR NOT (PY_MOD_ERR STREQUAL ""))
+  message(FATAL_ERROR "${PY_MOD_ERR}")
+endif()
+
 find_package(SWIG REQUIRED)
 
 set(SYSTEM_LIBRARIES
@@ -120,11 +133,6 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/stokes/python/test-stokes.py
   DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 add_test(NAME test-stokes.py COMMAND ${PYTHON_EXECUTABLE} test-stokes.py)
 
-# print summary
-
-include(FeatureSummary)
-feature_summary(WHAT ALL)
-
 # Installation targets
 
 # Install nitsol
@@ -140,16 +148,12 @@ install(DIRECTORY libstokes/src/ DESTINATION include/libstokes FILES_MATCHING PA
 install(TARGETS stokes_shared LIBRARY DESTINATION lib)
 
 # Install Python modules
-execute_process(
-  COMMAND "${PYTHON_EXECUTABLE}" -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(prefix=''));"
-  OUTPUT_VARIABLE PY_MOD_DIR
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-  ERROR_QUIET)
-if(PY_MOD_DIR STREQUAL "")
-  message(STATUS "Could not determine Python module directory. Not installing Python module!")
-else()
-  file(WRITE ${CMAKE_BINARY_DIR}/__init__.py "from stokes import *")
-  install(FILES ${CMAKE_BINARY_DIR}/__init__.py DESTINATION ${PY_MOD_DIR}/stokes)
-  install(FILES ${CMAKE_BINARY_DIR}/stokes.py DESTINATION ${PY_MOD_DIR}/stokes)
-  install(TARGETS _stokes LIBRARY DESTINATION ${PY_MOD_DIR}/stokes)
-endif()
+file(WRITE ${CMAKE_BINARY_DIR}/__init__.py "from stokes import *")
+install(FILES ${CMAKE_BINARY_DIR}/__init__.py DESTINATION ${PY_MOD_DIR}/stokes)
+install(FILES ${CMAKE_BINARY_DIR}/stokes.py DESTINATION ${PY_MOD_DIR}/stokes)
+install(TARGETS _stokes LIBRARY DESTINATION ${PY_MOD_DIR}/stokes)
+
+# print summary
+
+include(FeatureSummary)
+feature_summary(WHAT ALL)
