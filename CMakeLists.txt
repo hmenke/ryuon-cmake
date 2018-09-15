@@ -100,10 +100,10 @@ add_library(stokes_object OBJECT ${LIBSTOKES_SRC})
 add_library(stokes_static STATIC $<TARGET_OBJECTS:stokes_object>)
 set_target_properties(stokes_static PROPERTIES OUTPUT_NAME stokes)
 include_directories(${GUILE_INCLUDE_DIRS})
-target_link_libraries(stokes_static nitsol_static iter_static ${GUILE_LIBRARIES})
+target_link_libraries(stokes_static nitsol_static iter_static ${SYSTEM_LIBRARIES})
 add_library(stokes_shared SHARED $<TARGET_OBJECTS:stokes_object>)
 set_target_properties(stokes_shared PROPERTIES OUTPUT_NAME stokes)
-target_link_libraries(stokes_shared nitsol_shared iter_shared ${GUILE_LIBRARIES})
+target_link_libraries(stokes_shared nitsol_shared iter_shared ${SYSTEM_LIBRARIES})
 # stokes3
 
 set(STOKES3_SRC
