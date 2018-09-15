@@ -1,26 +1,36 @@
-dist: trusty
 sudo: false
 
 language: c
 
-addons:
-  apt:
-    packages:
-    - libarpack2-dev
-    - libblas-dev
-    - libgsl0-dev
-    - gfortran
-    - guile-2.0-dev
-    - liblapack-dev
-    - libnetcdf-dev
-    - libpython2.7-dev
-    - python2.7
-    - swig
+matrix:
+  include:
+  - os: linux
+    dist: trusty
+    addons:
+      apt:
+        packages:
+        - libarpack2-dev
+        - libblas-dev
+        - libgsl0-dev
+        - gfortran
+        - guile-2.0-dev
+        - liblapack-dev
+        - libnetcdf-dev
+        - libpython2.7-dev
+        - python2.7
+        - swig
+  - os: osx
+    install:
+    - brew update
+    - brew install gcc || true
+    - brew install arpack gsl guile@2.0 lapack netcdf swig
+    - brew link --overwrite --force gcc guile@2.0 lapack
+    - brew unlink python@2
 
 script:
   - mkdir build
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=~/ryuon ..
   - make -j 2
-  - make -j 2 test
+  - make -j 2 CTEST_OUTPUT_ON_FAILURE=1 test
   - make install
