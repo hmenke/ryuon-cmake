@@ -26,8 +26,12 @@ more.
 
 ## Usage
 
-The usage is simple.  Just follow your regular CMake workflow.
+The usage is simple.  Just follow your regular CMake workflow.  The
+repository has to be cloned recursively because RYUON itself is
+incorporated as submodules.
 ```bash
+git clone --recursive https://github.com/hmenke/ryuon-cmake.git
+cd ryuon-cmake
 mkdir build
 cd build
 cmake ..
