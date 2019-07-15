@@ -36,8 +36,8 @@ find_package(ARPACK REQUIRED)
 find_package(BLAS REQUIRED)
 find_package(GSL REQUIRED)
 find_package(Guile REQUIRED)
-if(GUILE_VERSION VERSION_GREATER 2.1) # Require Guile 2.0.x
-  message(FATAL_ERROR "RYUON requires Guile with version <= 2.0 but ${GUILE_VERSION} was found.")
+if(GUILE_VERSION VERSION_GREATER 1.9) # Require Guile 1.8.x
+  message(FATAL_ERROR "RYUON requires Guile with version <= 1.8 but ${GUILE_VERSION} was found.")
 endif()
 find_package(LAPACK REQUIRED)
 find_package(NetCDF REQUIRED)

@@ -13,7 +13,7 @@ matrix:
         - libblas-dev
         - libgsl0-dev
         - gfortran
-        - guile-2.0-dev
+        - guile-1.8-dev
         - liblapack-dev
         - libnetcdf-dev
         - libpython2.7-dev
@@ -21,10 +21,11 @@ matrix:
         - swig
   - os: osx
     install:
+    - curl -LO 'https://raw.githubusercontent.com/texmacs/homebrew/master/guile@1.8.rb'
     - brew update
     - brew install gcc || true
-    - brew install arpack gsl guile@2.0 lapack netcdf swig
-    - brew link --overwrite --force gcc guile@2.0 lapack
+    - brew install arpack gsl 'guile@1.8.rb' lapack netcdf swig
+    - brew link --overwrite --force gcc guile@1.8 lapack
     - brew unlink python@2
 
 script:

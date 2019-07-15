@@ -46,7 +46,7 @@ make -j 16
 * ARPACK
 * BLAS
 * GSL
-* Guile (<=2.0) yes, this is indeed **less or equal**
+* Guile (<=1.8) yes, this is indeed **less or equal**
 * LAPACK
 * NetCDF
 * Python 2
@@ -55,7 +55,9 @@ make -j 16
 On a naked Ubuntu 18.04 LTS you can easily install all the required
 dependencies using
 ```bash
-apt-get install build-essential cmake git libarpack2-dev libblas-dev libgsl-dev gfortran guile-2.0-dev liblapack-dev libnetcdf-dev libpython2.7-dev python2.7 swig
+echo "deb http://archive.ubuntu.com/ubuntu/ xenial main restricted universe" | sudo tee /etc/apt/sources.list.d/xenial.list
+sudo apt-get update
+sudo apt-get install build-essential cmake git libarpack2-dev libblas-dev libgsl-dev gfortran guile-1.8-dev liblapack-dev libnetcdf-dev libpython2.7-dev python2.7 swig
 ```
 
 [travis-svg]: https://travis-ci.org/hmenke/ryuon-cmake.svg?branch=master
